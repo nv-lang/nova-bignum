@@ -1,41 +1,44 @@
-# nova.toml — nova-bignum: числа произвольной точности (BigInt/BigRat/BigDecimal/
-# BigFloat) на чистом Nova.
+# nova.toml — nova-bignum: arbitrary-precision numbers (BigInt/BigRat/
+# BigDecimal/BigFloat) in pure Nova.
 #
-# План 235 (`docs/plans/235-bigint.md` в репе nova). Решение владельца 2026-07-29:
-# BigInt живёт ОТДЕЛЬНЫМ ПАКЕТОМ В СВОЕЙ РЕПЕ, а не в `std`. Причина: ядро языка
-# остаётся fixed-width с trap-политикой (D423), а произвольная точность — это
-# подключаемая зависимость, а не часть обязательной поставки std. Пакет
-# переименован из `bigint` в `bignum` планом 243 Ф.U/У.3 (решение владельца
-# 2026-08-03) — семья выросла за пределы одного члена (BigInt/BigRat/
-# BigDecimal/BigFloat), новое имя описывает весь класс, ничего лишнего не
-# обещает (в отличие от `math`) и узнаваемо рядом с Go `math/big`.
+# Plan 235 (`docs/plans/235-bigint.md` in the nova repository). Owner's
+# decision 2026-07-29: BigInt lives as a SEPARATE PACKAGE IN ITS OWN
+# REPOSITORY, not in `std`. The reason: the core of the language stays
+# fixed-width with a trap policy (D423), while arbitrary precision is an
+# opt-in dependency rather than part of the mandatory std delivery. The
+# package was renamed from `bigint` to `bignum` by plan 243 phase U.3 (owner's
+# decision 2026-08-03) — the family outgrew a single member (BigInt/BigRat/
+# BigDecimal/BigFloat), the new name describes the whole class, promises
+# nothing extra (unlike `math`), and is recognisable next to Go's `math/big`.
 #
-# Раскладка — как у nova-tls / nova-compress / nova-polaris: канон `src/`, корень
-# исходников задаётся ключом `[lib] src`, поэтому пути модулей резолвятся
-# ОТНОСИТЕЛЬНО `src/` (D78 — путь модуля НЕ включает `src`). Модули НЕ
-# перечисляются в манифесте — их задаёт файловая система (лагерь Rust/Go;
-# Python/Swift, напротив, выписывают списком). Публичная поверхность
-# объявляется словом `export` в коде, как `pub` в Rust, — дублировать её
-# списком в манифесте значило бы завести второй источник правды.
+# Layout — the same as nova-tls / nova-compress / nova-polaris: the `src/`
+# canon, with the source root set by the `[lib] src` key, so module paths
+# resolve RELATIVE to `src/` (D78 — a module path does NOT include `src`).
+# Modules are NOT listed in the manifest: the file system defines them (the
+# Rust/Go camp; Python and Swift, by contrast, spell the list out). The public
+# surface is declared by the word `export` in the code, like `pub` in Rust —
+# duplicating it as a list in the manifest would create a second source of
+# truth.
 #
-# Раскладка после плана 243 Ф.U (перевод семьи на ПАПКИ-МОДУЛИ, решение
-# владельца 2026-08-03; образец — `std/collections/vec` в репе nova):
-#   src/bignum.nv        -> module bignum          — общее семье: Sign, ParseNumberError
-#   src/bigint/          -> module bignum.bigint     (_module.nv + core.nv + тесты)
+# Layout after plan 243 phase U (the family moved onto FOLDER-MODULES, owner's
+# decision 2026-08-03; the model is `std/collections/vec` in the nova repo):
+#   src/bignum.nv        -> module bignum          — shared by the family: Sign, ParseNumberError
+#   src/bigint/          -> module bignum.bigint     (_module.nv + core.nv + tests)
 #   src/bigdecimal/      -> module bignum.bigdecimal
 #   src/bigfloat/        -> module bignum.bigfloat
 #   src/bigrat/          -> module bignum.bigrat
-# Файлы внутри папки равноправны и объявляют ОДИН модуль — поэтому тесты видят
-# приватное своего модуля (ради этого переезд и делался).
+# Files inside a folder are co-equal and declare ONE module — which is why the
+# tests can see their own module's private items; that is what the move was for.
 #
-# Native-артефактов НЕТ и не планируется: bignum — переносимая чистая арифметика,
-# ровно тот класс кода, что обязан жить в `.nv` (никакого GMP/libtommath —
-# лицензии и линковка того не стоят, эталон — Go `math/big`, чистый Go).
+# There are NO native artifacts and none are planned: bignum is portable pure
+# arithmetic, exactly the class of code that belongs in `.nv` (no GMP, no
+# libtommath — the licences and the linking are not worth it; the reference is
+# Go's `math/big`, which is pure Go).
 
 [package]
 name = "bignum"
 version = "0.1.0"
-description = "Числа произвольной точности (BigInt/BigRat/BigDecimal/BigFloat) на чистом Nova — знак + limbs u32, без C-зависимостей"
+description = "Arbitrary-precision numbers (BigInt/BigRat/BigDecimal/BigFloat) in pure Nova — sign plus u32 limbs, no C dependencies"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/nv-lang/nova-bignum"
 
