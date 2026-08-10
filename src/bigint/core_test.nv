@@ -15,12 +15,12 @@ test "zero/one constants" {
     ro z = BigInt.zero()
     assert(z.is_zero())
     ro zs = z.sign()
-    match zs { Zero => assert(true); _ => assert(false) }
+    match zs { Zero => assert(true), _ => assert(false) }
 
     ro o = BigInt.one()
     assert(!o.is_zero())
     ro os = o.sign()
-    match os { Pos => assert(true); _ => assert(false) }
+    match os { Pos => assert(true), _ => assert(false) }
 }
 
 test "is_zero / is_neg / is_one" {
@@ -34,11 +34,11 @@ test "is_zero / is_neg / is_one" {
 
 test "sign" {
     ro zs = BigInt.zero().sign()
-    match zs { Zero => assert(true); _ => assert(false) }
+    match zs { Zero => assert(true), _ => assert(false) }
     ro ps = (42).to_bigint().sign()
-    match ps { Pos => assert(true); _ => assert(false) }
+    match ps { Pos => assert(true), _ => assert(false) }
     ro ns = (-42).to_bigint().sign()
-    match ns { Neg => assert(true); _ => assert(false) }
+    match ns { Neg => assert(true), _ => assert(false) }
 }
 
 // ── Конверсии ──────────────────────────────────────────────────────────────
@@ -49,17 +49,17 @@ test "to_bigint: i64" {
     assert((-1).to_bigint() == -BigInt.one())
     ro a = (42).to_bigint()
     ro sa = a.sign()
-    match sa { Pos => assert(true); _ => assert(false) }
+    match sa { Pos => assert(true), _ => assert(false) }
     ro b = (-42).to_bigint()
     ro sb = b.sign()
-    match sb { Neg => assert(true); _ => assert(false) }
+    match sb { Neg => assert(true), _ => assert(false) }
 }
 
 test "to_bigint: u64" {
     ro v = (0xFFFFFFFFFFFFFFFF as u64).to_bigint()
     assert(!v.is_zero())
     ro vs = v.sign()
-    match vs { Pos => assert(true); _ => assert(false) }
+    match vs { Pos => assert(true), _ => assert(false) }
 }
 
 test "to_bigint: i128" {
@@ -71,10 +71,10 @@ test "to_bigint: i128" {
     assert(ni.to_bigint() == -BigInt.one())
     ro maxi = i128(9223372036854775807, 0xFFFFFFFFFFFFFFFF)
     ro maxs = maxi.to_bigint().sign()
-    match maxs { Pos => assert(true); _ => assert(false) }
+    match maxs { Pos => assert(true), _ => assert(false) }
     ro mini = i128((0x8000000000000000 as u64) as i64, 0)
     ro mins = mini.to_bigint().sign()
-    match mins { Neg => assert(true); _ => assert(false) }
+    match mins { Neg => assert(true), _ => assert(false) }
 }
 
 test "to_int: fits" {
@@ -550,17 +550,17 @@ test "div_rem: оба отрицательных" {
 
 test "to_str round-trip: степени десяти" {
     ro p1 = "1".to_bigint()
-    match p1 { Ok(v) => assert(v.to_str() == "1"); Err(_) => assert(false) }
+    match p1 { Ok(v) => assert(v.to_str() == "1"), Err(_) => assert(false) }
     ro p2 = "10".to_bigint()
-    match p2 { Ok(v) => assert(v.to_str() == "10"); Err(_) => assert(false) }
+    match p2 { Ok(v) => assert(v.to_str() == "10"), Err(_) => assert(false) }
     ro p3 = "100".to_bigint()
-    match p3 { Ok(v) => assert(v.to_str() == "100"); Err(_) => assert(false) }
+    match p3 { Ok(v) => assert(v.to_str() == "100"), Err(_) => assert(false) }
     ro p4 = "1000000".to_bigint()
-    match p4 { Ok(v) => assert(v.to_str() == "1000000"); Err(_) => assert(false) }
+    match p4 { Ok(v) => assert(v.to_str() == "1000000"), Err(_) => assert(false) }
     ro p5 = "1000000000".to_bigint()
-    match p5 { Ok(v) => assert(v.to_str() == "1000000000"); Err(_) => assert(false) }
+    match p5 { Ok(v) => assert(v.to_str() == "1000000000"), Err(_) => assert(false) }
     ro p6 = "10000000000000000000".to_bigint()
-    match p6 { Ok(v) => assert(v.to_str() == "10000000000000000000"); Err(_) => assert(false) }
+    match p6 { Ok(v) => assert(v.to_str() == "10000000000000000000"), Err(_) => assert(false) }
 }
 
 test "to_str round-trip: большие числа" {
@@ -606,17 +606,17 @@ test "invariant: нет ведущих нулевых лимбов" {
 test "invariant: ноль === Zero + пустые лимбы" {
     ro z = BigInt.zero()
     ro zs = z.sign()
-    match zs { Zero => assert(true); _ => assert(false) }
+    match zs { Zero => assert(true), _ => assert(false) }
     assert(z.limbs.len() == 0)
 
     ro z2 = (5).to_bigint() + (-5).to_bigint()
     ro z2s = z2.sign()
-    match z2s { Zero => assert(true); _ => assert(false) }
+    match z2s { Zero => assert(true), _ => assert(false) }
     assert(z2.limbs.len() == 0)
 
     ro z3 = (5).to_bigint() * (0).to_bigint()
     ro z3s = z3.sign()
-    match z3s { Zero => assert(true); _ => assert(false) }
+    match z3s { Zero => assert(true), _ => assert(false) }
 }
 
 // ── Операторные desugar ────────────────────────────────────────────────────
@@ -639,17 +639,17 @@ test "zero is canonical" {
     // Ноль после любой операции должен иметь Zero + пустые limbs
     ro z1 = BigInt.zero()
     ro z1s = z1.sign()
-    match z1s { Zero => assert(true); _ => assert(false) }
+    match z1s { Zero => assert(true), _ => assert(false) }
     assert(z1.limbs.len() == 0)
 
     ro z2 = (0).to_bigint()
     ro z2s = z2.sign()
-    match z2s { Zero => assert(true); _ => assert(false) }
+    match z2s { Zero => assert(true), _ => assert(false) }
     assert(z2.limbs.len() == 0)
 
     ro z3 = (5).to_bigint() + (-5).to_bigint()
     ro z3s = z3.sign()
-    match z3s { Zero => assert(true); _ => assert(false) }
+    match z3s { Zero => assert(true), _ => assert(false) }
     assert(z3.limbs.len() == 0)
 
     ro z4 = (5).to_bigint() - (5).to_bigint()

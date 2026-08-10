@@ -333,19 +333,19 @@ fn div_rem_limbs(a []u32, b []u32) -> ([]u32, []u32) {
 /// Значение равно нулю.
 #stable(since = "0.1")
 export fn BigInt @is_zero() -> bool {
-    match @sign { Zero => true; _ => false }
+    match @sign { Zero => true, _ => false }
 }
 
 /// Значение отрицательно.
 #stable(since = "0.1")
 export fn BigInt @is_neg() -> bool {
-    match @sign { Neg => true; _ => false }
+    match @sign { Neg => true, _ => false }
 }
 
 /// Whether the value is positive.
 #stable(since = "0.1")
 export fn BigInt @is_pos() -> bool {
-    match @sign { Pos => true; _ => false }
+    match @sign { Pos => true, _ => false }
 }
 
 /// Значение равно единице.
@@ -576,7 +576,7 @@ export fn BigInt @to_str() -> str {
         digits.remove(0)
     }
     consume sb = StringBuilder.new()
-    match @sign { Neg => { sb.append("-") }; _ => {} }
+    match @sign { Neg => { sb.append("-") }, _ => {} }
     sb.append(digits)
     sb   // голое значение коэрсится в str (#coerce finalize, D429 R9) — явный into_str избыточен
 }
