@@ -87,7 +87,7 @@ fn apply_sign(m BigInt, sign int) -> BigInt {
 /// плана 236). Возвращает `(rounded, drop)` — БЕЗ проверки потолка значащих
 /// цифр (это забота `round_to_precision`, у `@rescale` такого потолка нет).
 fn round_by_dropping(mant_abs BigInt, drop int, rm RoundingMode, sign int, sticky bool) -> (BigInt, int) {
-    if drop <= 0 { return (mant_abs, 0) }
+    if drop <= 0 { return (BigInt(mant_abs.sign, mant_abs.limbs), 0) }
     ro factor = pow10(drop)
     ro (quot, rem) = mant_abs.div_rem(factor) ?? panic("round_by_dropping: factor=10^drop, drop>0 после guard — не 0")
     ro half = factor.div((2).to_bigint()) ?? panic("round_by_dropping: 2 != 0")
@@ -115,7 +115,7 @@ fn round_by_dropping(mant_abs BigInt, drop int, rm RoundingMode, sign int, stick
 /// 1 больше геометрического отбрасывания при carry 99→100.
 fn round_to_precision(mant_abs BigInt, target_precision int, rm RoundingMode, sign int, sticky bool) -> (BigInt, int) {
     ro d0 = mant_abs.digits() - target_precision
-    if d0 <= 0 { return (mant_abs, 0) }
+    if d0 <= 0 { return (BigInt(mant_abs.sign, mant_abs.limbs), 0) }
     ro (rounded0, d1) = round_by_dropping(mant_abs, d0, rm, sign, sticky)
     if rounded0.digits() > target_precision {
         // carry 99→100: хвост после carry нулевой по построению — точное деление

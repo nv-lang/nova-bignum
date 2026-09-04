@@ -57,7 +57,7 @@ fn apply_sign(m BigInt, s Sign) -> BigInt {
 /// contains non-zero bits. Returns (rounded, bits_lost).
 fn round_to_precision(mant_abs BigInt, prec int, rm RoundingMode, sign Sign, sticky bool) -> (BigInt, int) {
     ro b = mant_abs.bit_length() - prec
-    if b <= 0 { return (mant_abs, 0) }
+    if b <= 0 { return (BigInt(mant_abs.sign, mant_abs.limbs), 0) }
     ro factor = BigInt.one().shl(b)
     ro (quot, rem) = mant_abs.div_rem(factor) ?? panic("round_to_precision: factor=2^b, b>0, factor != 0")
     ro half = BigInt.one().shl(b - 1)
